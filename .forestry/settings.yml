@@ -15,6 +15,9 @@ front_matter_path: ''
 use_front_matter_path: false
 file_template: ":filename:"
 build:
+  preview_env:
+  - SUPABASE_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaWF0IjoxNjMzNDU5NTUzLCJleHAiOjE5NDkwMzU1NTN9.sul6-H4_3V_SpsMTEMsxjF11FAo7kbKwxJTenVskSv0
+  - SUPABASE_URL=https://vtkvmcwrjrrjuzjwbpfz.supabase.co
   preview_output_directory: public
   install_dependencies_command: npm install
   preview_docker_image: forestryio/node:12
