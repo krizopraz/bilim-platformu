@@ -1,5 +1,13 @@
 const path = require('path')
 const { createFilePath } = require('gatsby-source-filesystem')
+const { createClient } = require('@supabase/supabase-js')
+
+const client = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_API_KEY,
+    {}
+)
+
 require('dotenv').config({
     path: `../../.env.${process.env.NODE_ENV}`,
 })
@@ -10,7 +18,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     // Get all markdown blog posts sorted by date
     const result = await graphql(
         `
-      {
+        {
         allMdx(
           sort: { fields: [frontmatter___date], order: ASC }
           limit: 1000
@@ -42,7 +50,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
             const nextPostId = index === posts.length - 1 ? null : posts[index + 1].id
             process.env.NODE_ENV === 'production' ? '' : console.log('id:' + post.id)
             createPage({
-                // FIXME
+                // FIXME yazilara kategori kısmı zaten ekli tüm yazılara kategori kısmı eklendiği zaman alttaki kullanılabilir
                 // path: '/yazilar'+`${post.fields.category }` + post.fields.slug,
                 path: '/yazilar'+ post.fields.slug,
                 component: blogPost,
@@ -93,6 +101,8 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       }
     `
     )
+
+    // Etkinlik sayfası oluşturur
     const etkinlikler = eresult.data.allMdx.nodes
     if (etkinlikler.length > 0) {
         etkinlikler.forEach((etkinlik) => {
@@ -106,6 +116,34 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
             })
         })
     }
+    // Beyin fırtınası"
+    const {data,error} =  await client.from('beyinfirtinasi').select().eq('ana_gonderi',true)
+    if(error)console.error(error)
+    if (data.length > 0) {
+        data.forEach((konu) => {
+            process.env.NODE_ENV === 'production' ? '' : console.log('id:' + konu.id)
+            createPage({
+                path: '/beyin-firtinasi/konular/'+ konu.id,
+                component: path.resolve('./src/templates/beyinfirtinasi-konu.js'),
+                context: {
+                    id: konu.id,
+
+                },
+            })
+        })
+    }
+    Array.from({ length: numPages }).forEach((_, i) => {
+        createPage({
+            path: i === 0 ? '/beyinfirtinasi' : `/${i + 1}`,
+            component: path.resolve('./src/templates/beyinfirtinasi-main.js'),
+            context: {
+                limit: postsPerPage,
+                skip: i * postsPerPage,
+                numPages,
+                currentPage: i + 1,
+            },
+        })
+    })
 }
 
 exports.onCreateNode = ({ node, actions, getNode }) => {

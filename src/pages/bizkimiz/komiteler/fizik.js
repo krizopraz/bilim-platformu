@@ -1,10 +1,13 @@
 import React from 'react'
-
+import MainLayout from '../../../components/mainLayout'
+import Seo from '../../../components/blogSeo'
 const fizik = () => {
     return (
-        <div>
+        <MainLayout >
+            <Seo title='Fizik - Komiteler'/>
 
-        </div>
+
+        </MainLayout>
     )
 }
 

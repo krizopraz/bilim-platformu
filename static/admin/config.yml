@@ -2,13 +2,19 @@
 backend:
   name: git-gateway
   branch: master # Branch to update (optional; defaults to master)
+
 publish_mode: editorial_workflow
+
+media_folder: static/img
+public_folder: /img
+
 collections:
   - name: "blog" # Used in routes, e.g., /admin/collections/blog
     label: "Yazlılar" # Used in the UI
     folder: "content/blog" # The path to the folder where the documents are stored
     create: true # Allow users to create new documents in this collection
     slug: "{{slug}}" # Filename template, e.g., YYYY-MM-DD-title.md
+    path: '{{title}}/index'
     fields: # The fields for each document, usually in front matter
       - {label: "Başlık", name: "title", widget: "string"}
       - {label: "Tarih", name: "date", widget: "datetime"}
@@ -19,11 +25,14 @@ collections:
     folder: "content/etkinlikler" # The path to the folder where the documents are stored
     create: true # Allow users to create new documents in this collection
     slug: "{{slug}}" # Filename template, e.g., YYYY-MM-DD-title.md
+    path: '{{title}}/index'
     fields: # The fields for each document, usually in front matter
       - {label: "Başlık", name: "title", widget: "string"}
       - {label: "Etkinlik Resmi", name: "thumbnail", widget: "image"}
       - {label: "Etkinlik Tarihi", name: "date", widget: "datetime"}
       - {label: "Açıklama", name: "description", widget: "string"}
       - {label: "Etkinlik Hakkında Detaylı Açıklama", name: "body", widget: "markdown"}
+
 locale: 'tr'
+
 local_backend: true

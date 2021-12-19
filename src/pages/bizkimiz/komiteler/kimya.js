@@ -1,10 +1,14 @@
 import React from 'react'
+import Seo from '../../../components/blogSeo'
+import MainLayout from '../../../components/mainLayout'
 
 const kimya = () => {
     return (
-        <div>
+        <MainLayout>
+            <Seo title='Kimya - Komiteler'/>
 
-        </div>
+
+        </MainLayout>
     )
 }
 

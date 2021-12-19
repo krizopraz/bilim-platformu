@@ -7,12 +7,12 @@ import client from '../db/supabase.js'
 import { MDXRenderer } from 'gatsby-plugin-mdx'
 
 // eslint-disable-next-line react/prop-types
-function YorumYap({ postId, actions }) {
+function YorumYap({ location, postId, actions }) {
     const [icerik, setIcerik] = React.useState('')
     if (client.auth.session() === undefined || client.auth.session() === null)
         return (
             <span>
-        Yorum yapabilmek için <Link to="/girisyap">Giriş yapmalısınız</Link>
+        Yorum yapabilmek için <Link to={`/girisyap?redirect=${window.location.pathname}` }>Giriş yapmalısınız</Link>
         .Kayıt olmak için <Link to="/kayitol">buraya tıklayın</Link>.
             </span>
         )
@@ -25,8 +25,8 @@ function YorumYap({ postId, actions }) {
                 const { data, error } = await client
                     .from('yorumlar')
                     .insert([
-                        {   icerik,
-                            aitlik_id:postId,
+                        {   icerik:icerik.trim(),
+                            post_id:postId,
                             kullanici_id: user.id,
                             kullanici_adi:user.user_metadata.ad,
                             kullanici_soyadi:user.user_metadata.soyad
@@ -75,16 +75,16 @@ function YorumYap({ postId, actions }) {
     )
 }
 
-function Comments({ postId }) {
+function Yorumlar({ postId }) {
     const [yorumlar, setYorumlar] = React.useState([])
 
     React.useEffect(() => {
         const getirYorumlar = async () => {
             try {
                 const { data, error } = await client
-                    .from('yorumlar')
+                    .from('yazilar_yorumlar')
                     .select()
-                    .eq('aitlik_id', postId)
+                    .eq('post_id', postId)
                 if (error) throw error
                 setYorumlar(data)
             } catch (error) {
@@ -110,14 +110,17 @@ function Comments({ postId }) {
                 {yorumlar.length === 0 ? (
                     <span>Yorum Bulunamadı. İlk yorumu atmaya ne dersin ? </span>
                 ) : (
-                    yorumlar.map(comment => {
+                    yorumlar.map(yorum => {
                         return (
-                            <li className='media' key={comment.id}>
+                            <li className='media' key={yorum.id}>
                                 <div className='media-content' >
                                     <article className='content' >
-                                        <h4 >{comment.kullanici_adi+' '+comment.kullanici_soyadi }</h4>
-                                        <p>{comment.icerik}</p>
-                                        <sub>{(new Date(comment.zaman)).toLocaleDateString()}</sub>
+                                        <h4 >{yorum.kullanici_adi+' '+yorum.kullanici_soyadi }</h4>
+                                        <p>{yorum.icerik}</p>
+                                        <sub>{(new Date(yorum.zaman)).toLocaleDateString()}</sub>
+                                        <footer>
+
+                                        </footer>
                                     </article>
                                 </div>
                             </li>
@@ -130,11 +133,10 @@ function Comments({ postId }) {
 }
 
 const BlogPostTemplate = ({ data, location }) => {
-    console.log(data)
+
     const post = data.mdx
     const siteTitle = data.site.siteMetadata?.title || 'Title'
     const { previous, next } = data
-    console.log(post)
     return (
         <Layout location={location} className='section' title={siteTitle}>
             <Seo
@@ -158,7 +160,7 @@ const BlogPostTemplate = ({ data, location }) => {
                 </section>
                 <hr />
                 <footer>
-                    <Comments postId={post.id} />
+                    <Yorumlar location={location} postId={post.id} />
                 </footer>
             </article>
             <nav className="blog-post-nav">

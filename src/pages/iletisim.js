@@ -1,10 +1,12 @@
 import React from 'react'
+import Seo from '../components/blogSeo'
 import Layout from '../components/mainLayout'
 
 const iletisim = () => {
     return (
         <Layout>
-            <div>iletisim</div>
+            <Seo title='İletişim'/>
+asdasdsadasd
         </Layout>
     )
 }

@@ -5,19 +5,32 @@ import '../normalize.css'
 import React from 'react'
 
 import ReactMarkdown from 'react-markdown'
-import BlogPostTemplate from './preview-templates/BlogPreviewTemplate'
 const BlogPostPreview = ({ entry, widgetFor }) => {
-    //console.log(widgetFor('body'))
+    console.log(widgetFor('body'))
     //const Content = widgetFor('body')
     return (
-        <BlogPostTemplate entry={entry} body={
-            <ReactMarkdown >
-                {widgetFor('body')}
-            </ReactMarkdown>
-        }  />
+        <article
+            className="blog-post m-4 container"
+            itemScope
+            itemType="http://schema.org/Article"
+        >
+            <header>
+                <h1 className='title is-1' itemProp="headline">{entry.getIn(['data','title'])}</h1>
+                <sub className='subtitle is-5' >{entry.getIn(['data','date'])}</sub>
+            </header>
+            <section
+                className='content'
+                itemProp="articleBody"
 
+            >
+
+                <ReactMarkdown escapeHtml={false} >
+                    {widgetFor('body')}
+                </ReactMarkdown>
+            </section>
+        </article>
     )
 }
-CMS.registerPreviewTemplate('blog',BlogPostPreview)
-//import styles from '!node-sass!../styles/global.scss'
-//CMS.registerPreviewStyle(styles.toString(),{raw:true})
+
+CMS.registerPreviewTemplate('yazi',BlogPostPreview)
+CMS.registerPreviewStyle('./bulma.min.css')

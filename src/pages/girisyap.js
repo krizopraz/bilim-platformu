@@ -1,8 +1,13 @@
+/* eslint-disable react/prop-types */
+import { Link } from 'gatsby'
+import { StaticImage } from 'gatsby-plugin-image'
 import React from 'react'
-import { Helmet } from 'react-helmet'
+import Seo from '../components/blogSeo.js'
+
 import client from '../db/supabase.js'
 
-const Girisyap = () => {
+const Girisyap = ({location}) => {
+    const params = new URLSearchParams(location.search)
     if(client.auth.session() != null || client.auth.session() != undefined ){
         window.location.href = '/blog'
     }
@@ -17,12 +22,10 @@ const Girisyap = () => {
     }
     return (
         <div className='hero is-primary is-fullheight'>
-            <Helmet>
-                <title>Giriş Yap</title>
-            </Helmet>
+            <Seo title='Giriş Yap' />
             <div className="hero-body">
                 <div className="container">
-                    <form className='box'
+                    <form className='form box'
                         onSubmit={event => {
                             event.preventDefault()
                             const giris = async () => {
@@ -31,15 +34,22 @@ const Girisyap = () => {
                                         email: fields.email,
                                         password: fields.password,
                                     },
-                                    { redirectTo: 'localhost:8000/blog' }
+                                    { redirectTo: 'localhost:8000'+params.get('redirect') }
                                 )
                                 if (error) return 0
                                 console.log(user)
-                                window.location.href = '/blog'
+                                window.location.href = params.get('redirect')
                             }
                             giris()
                         }}
                     >
+                        <div className=" has-text-dark has-text-centered">
+                            <Link className='level-item image' to="/">
+                                <StaticImage className='image is-128x128' alt='LOGO' src='../images/Logo.png' formats={['auto','avif','png']}/>
+                            </Link>
+                            <br />
+                            <h3 className='title has-text-dark is-3'>Giriş Yap | Bilim Platformu</h3>
+                        </div>
                         <div className="field">
                             <label className='label' htmlFor="email">Email</label>
                             <div className="control">
@@ -64,7 +74,18 @@ const Girisyap = () => {
                                 />
                             </div>
                         </div>
-                        <div className="control"><button className='button' type="submit">Giriş Yap</button></div>
+                        <div className="field">
+                            <div className="control">
+                                <div className="level">
+                                    <div className="level-right">
+                                        <button className='button' type="submit">Giriş Yap</button>
+                                    </div>
+                                    <div className="level-left">
+                                        <Link className='has-text-link' to='/kayitol'> Hesabın yokmu ? Hemen kayıt olmak için buraya tıkla. </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
